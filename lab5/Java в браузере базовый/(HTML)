@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Мини-калькулятор</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 40px auto; padding: 20px; }
+    input, select, button { margin: 8px 0; padding: 8px; width: 100%; box-sizing: border-box; }
+    #result { font-size: 1.4em; margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 6px; }
+    .error { color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>Мини-калькулятор</h1>
+
+  <label>Первое число:</label>
+  <input type="number" id="num1" placeholder="Введите число">
+
+  <label>Второе число:</label>
+  <input type="number" id="num2" placeholder="Введите число">
+
+  <label>Операция:</label>
+  <select id="operation">
+    <option value="+">Сложение (+)</option>
+    <option value="-">Вычитание (−)</option>
+    <option value="*">Умножение (×)</option>
+    <option value="/">Деление (÷)</option>
+  </select>
+
+  <button id="calcBtn">Вычислить</button>
+  <button id="clearBtn">Очистить</button>
+
+  <div id="result">Результат появится здесь</div>
+
+  <script src="script.js"></script>
+</body>
+</html>

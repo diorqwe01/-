@@ -1,0 +1,54 @@
+const tempInput = document.getElementById("tempInput");
+const fromScale = document.getElementById("fromScale");
+const toScale = document.getElementById("toScale");
+const resultDiv = document.getElementById("result");
+const convertBtn = document.getElementById("convertBtn");
+const swapBtn = document.getElementById("swapBtn");
+
+// Функции преобразования
+function celsiusToFahrenheit(c) { return c * 9 / 5 + 32; }
+function celsiusToKelvin(c) { return c + 273.15; }
+function fahrenheitToCelsius(f) { return (f - 32) * 5 / 9; }
+function kelvinToCelsius(k) { return k - 273.15; }
+
+function convertTemperature(value, from, to) {
+  // Сначала переводим всё в Цельсий
+  let celsius;
+  if (from === "C") celsius = value;
+  else if (from === "F") celsius = fahrenheitToCelsius(value);
+  else if (from === "K") celsius = kelvinToCelsius(value);
+
+  // Потом из Цельсия в нужную шкалу
+  if (to === "C") return celsius;
+  if (to === "F") return celsiusToFahrenheit(celsius);
+  if (to === "K") return celsiusToKelvin(celsius);
+}
+
+convertBtn.addEventListener("click", () => {
+  const value = parseFloat(tempInput.value);
+  const from = fromScale.value;
+  const to = toScale.value;
+
+  if (isNaN(value)) {
+    resultDiv.textContent = "Введите корректное число!";
+    resultDiv.classList.add("error");
+    return;
+  }
+
+  if (from === "K" && value < 0) {
+    resultDiv.textContent = "Температура Кельвина не может быть отрицательной!";
+    resultDiv.classList.add("error");
+    return;
+  }
+
+  const result = convertTemperature(value, from, to);
+  resultDiv.textContent = `\( {value} ° \){from} = \( {result.toFixed(2)} ° \){to}`;
+  resultDiv.classList.remove("error");
+});
+
+// Дополнительная функция — поменять шкалы местами
+swapBtn.addEventListener("click", () => {
+  const temp = fromScale.value;
+  fromScale.value = toScale.value;
+  toScale.value = temp;
+});

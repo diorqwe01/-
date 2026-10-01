@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Конвертер температуры</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 420px; margin: 40px auto; padding: 20px; }
+    input, select, button { margin: 8px 0; padding: 8px; width: 100%; box-sizing: border-box; }
+    #result { margin-top: 15px; padding: 12px; background: #e8f5e9; border-radius: 6px; font-size: 1.2em; }
+    .error { background: #ffebee; color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>Конвертер температуры</h1>
+
+  <label>Значение:</label>
+  <input type="number" id="tempInput" placeholder="Введите температуру">
+
+  <label>Из шкалы:</label>
+  <select id="fromScale">
+    <option value="C">Цельсий (°C)</option>
+    <option value="F">Фаренгейт (°F)</option>
+    <option value="K">Кельвин (K)</option>
+  </select>
+
+  <label>В шкалу:</label>
+  <select id="toScale">
+    <option value="C">Цельсий (°C)</option>
+    <option value="F">Фаренгейт (°F)</option>
+    <option value="K">Кельвин (K)</option>
+  </select>
+
+  <button id="convertBtn">Конвертировать</button>
+  <button id="swapBtn">Поменять местами</button>
+
+  <div id="result">Результат появится здесь</div>
+
+  <script src="script.js"></script>
+</body>
+</html>

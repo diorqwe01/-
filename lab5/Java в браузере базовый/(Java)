@@ -1,0 +1,48 @@
+const num1Input = document.getElementById("num1");
+const num2Input = document.getElementById("num2");
+const operationSelect = document.getElementById("operation");
+const resultDiv = document.getElementById("result");
+const calcBtn = document.getElementById("calcBtn");
+const clearBtn = document.getElementById("clearBtn");
+
+// Пользовательская функция
+function calculate(a, b, op) {
+  if (op === "+") return a + b;
+  if (op === "-") return a - b;
+  if (op === "*") return a * b;
+  if (op === "/") {
+    if (b === 0) return null; // деление на ноль
+    return a / b;
+  }
+  return null;
+}
+
+calcBtn.addEventListener("click", () => {
+  const a = parseFloat(num1Input.value);
+  const b = parseFloat(num2Input.value);
+  const op = operationSelect.value;
+
+  if (isNaN(a) || isNaN(b)) {
+    resultDiv.textContent = "Введите оба числа!";
+    resultDiv.classList.add("error");
+    return;
+  }
+
+  const res = calculate(a, b, op);
+
+  if (res === null) {
+    resultDiv.textContent = "Ошибка: деление на ноль!";
+    resultDiv.classList.add("error");
+  } else {
+    resultDiv.textContent = `Результат: ${res}`;
+    resultDiv.classList.remove("error");
+  }
+});
+
+// Дополнительная функция — очистка
+clearBtn.addEventListener("click", () => {
+  num1Input.value = "";
+  num2Input.value = "";
+  resultDiv.textContent = "Результат появится здесь";
+  resultDiv.classList.remove("error");
+});

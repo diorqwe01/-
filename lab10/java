@@ -1,0 +1,70 @@
+import {
+  celsiusToFahrenheit,
+  fahrenheitToCelsius,
+  celsiusToKelvin,
+  formatTemp,
+} from "./modules/temperature.js";
+
+const input = document.querySelector("#celsius");
+const resultEl = document.querySelector("#result");
+const errorEl = document.querySelector("#error");
+
+function clearMessages() {
+  resultEl.textContent = "";
+  errorEl.textContent = "";
+}
+
+function showError(message) {
+  errorEl.textContent = message;
+  resultEl.textContent = "";
+}
+
+function getValue() {
+  const raw = input.value.trim();
+  if (raw === "") {
+    showError("Введите значение температуры.");
+    return null;
+  }
+  const value = Number(raw);
+  if (!Number.isFinite(value)) {
+    showError("Введите корректное число.");
+    return null;
+  }
+  return value;
+}
+
+document.querySelector("#toFahrenheit").addEventListener("click", () => {
+  clearMessages();
+  const c = getValue();
+  if (c === null) return;
+  const f = celsiusToFahrenheit(c);
+  resultEl.textContent = `${formatTemp(c)} °C = ${formatTemp(f)} °F`;
+});
+
+document.querySelector("#toKelvin").addEventListener("click", () => {
+  clearMessages();
+  const c = getValue();
+  if (c === null) return;
+  const k = celsiusToKelvin(c);
+  resultEl.textContent = `${formatTemp(c)} °C = ${formatTemp(k)} K`;
+});
+
+document.querySelector("#fromFahrenheit").addEventListener("click", () => {
+  clearMessages();
+  const f = getValue();
+  if (f === null) return;
+  const c = fahrenheitToCelsius(f);
+  resultEl.textContent = `${formatTemp(f)} °F = ${formatTemp(c)} °C`;
+});
+
+document.querySelector("#clear").addEventListener("click", () => {
+  input.value = "";
+  clearMessages();
+  input.focus();
+});
+
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    document.querySelector("#toFahrenheit").click();
+  }
+});

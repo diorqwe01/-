@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Модульный конвертер температур</title>
+  <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Конвертер температур</h1>
+    <p class="subtitle">ES Modules • Вариант 1 (базовый)</p>
+
+    <div class="form-group">
+      <label for="celsius">Температура (°C)</label>
+      <input type="number" id="celsius" placeholder="Введите градусы Цельсия" step="any">
+    </div>
+
+    <div class="buttons">
+      <button id="toFahrenheit" type="button">°C → °F</button>
+      <button id="toKelvin" type="button">°C → K</button>
+      <button id="fromFahrenheit" type="button">°F → °C</button>
+      <button id="clear" type="button" class="secondary">Очистить</button>
+    </div>
+
+    <div id="result" class="result" aria-live="polite"></div>
+    <div id="error" class="error" aria-live="assertive"></div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

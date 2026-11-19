@@ -1,0 +1,96 @@
+const express = require('express');
+const session = require('express-session');
+
+const app = express();
+
+app.use(express.json());
+app.use(express.static('public'));
+
+app.use(session({
+    secret: 'medium-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax'
+    }
+}));
+
+const users = [
+    {
+        login: 'student',
+        password: '12345',
+        role: 'student'
+    },
+    {
+        login: 'teacher',
+        password: 'teach123',
+        role: 'teacher'
+    }
+];
+
+// Вход
+app.post('/login', (req, res) => {
+    const { login, password } = req.body;
+
+    const user = users.find(u =>
+        u.login === login && u.password === password
+    );
+
+    if (!user) {
+        return res.status(401).json({
+            message: 'Неверный логин или пароль'
+        });
+    }
+
+    req.session.user = {
+        login: user.login,
+        role: user.role
+    };
+
+    res.json({
+        message: 'Вход успешен',
+        role: user.role
+    });
+});
+
+// Страница студента
+app.get('/student', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ message: 'Войдите в систему' });
+    }
+
+    if (req.session.user.role !== 'student') {
+        return res.status(403).json({ message: 'Доступ запрещен' });
+    }
+
+    res.json({
+        message: 'Добро пожаловать на страницу студента!'
+    });
+});
+
+// Страница преподавателя
+app.get('/teacher', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ message: 'Войдите в систему' });
+    }
+
+    if (req.session.user.role !== 'teacher') {
+        return res.status(403).json({ message: 'Доступ запрещен' });
+    }
+
+    res.json({
+        message: 'Добро пожаловать на страницу преподавателя!'
+    });
+});
+
+// Выход
+app.post('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.json({ message: 'Выход выполнен' });
+    });
+});
+
+app.listen(3001, () => {
+    console.log('Сервер: http://localhost:3001');
+});

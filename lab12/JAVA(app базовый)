@@ -1,0 +1,45 @@
+const form = document.getElementById('loginForm');
+const message = document.getElementById('message');
+
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            login: document.getElementById('login').value,
+            password: document.getElementById('password').value
+        })
+    });
+
+    const data = await response.json();
+
+    message.textContent = data.message;
+
+    if (response.ok) {
+        document.getElementById('profile').textContent =
+            'Добро пожаловать, ' + data.name;
+
+        form.hidden = true;
+        document.getElementById('logout').hidden = false;
+    }
+});
+
+document.getElementById('logout').addEventListener('click', async function() {
+    const response = await fetch('/logout', {
+        method: 'POST'
+    });
+
+    const data = await response.json();
+
+    message.textContent = data.message;
+    document.getElementById('profile').textContent = '';
+
+    form.hidden = false;
+    form.reset();
+
+    document.getElementById('logout').hidden = true;
+});

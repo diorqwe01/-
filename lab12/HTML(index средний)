@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Система ролей</title>
+</head>
+<body>
+
+<h1>Система авторизации</h1>
+
+<form id="loginForm">
+    <input id="login" placeholder="Логин" required>
+    <br><br>
+
+    <input id="password" type="password"
+           placeholder="Пароль" required>
+    <br><br>
+
+    <button>Войти</button>
+</form>
+
+<button id="student">Страница студента</button>
+<button id="teacher">Страница преподавателя</button>
+<button id="logout">Выйти</button>
+
+<p id="result"></p>
+
+<script src="app.js"></script>
+
+</body>
+</html>

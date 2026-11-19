@@ -1,0 +1,160 @@
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
+const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.static('public'));
+
+const ACCESS_SECRET = 'access-secret-key';
+const REFRESH_SECRET = 'refresh-secret-key';
+
+const user = {
+    login: 'student',
+    password: '12345',
+    name: 'Дарвин Диёр'
+};
+
+let refreshTokens = [];
+
+// Создание access token
+function createAccessToken() {
+    return jwt.sign(
+        { login: user.login },
+        ACCESS_SECRET,
+        { expiresIn: '5m' }
+    );
+}
+
+// Создание refresh token
+function createRefreshToken() {
+    return jwt.sign(
+        { login: user.login },
+        REFRESH_SECRET,
+        { expiresIn: '1d' }
+    );
+}
+
+// Вход
+app.post('/login', (req, res) => {
+    const { login, password } = req.body;
+
+    if (login !== user.login || password !== user.password) {
+        return res.status(401).json({
+            message: 'Неверный логин или пароль'
+        });
+    }
+
+    const accessToken = createAccessToken();
+    const refreshToken = createRefreshToken();
+
+    refreshTokens.push(refreshToken);
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: false,
+        path: '/'
+    });
+
+    res.json({
+        message: 'Вход выполнен',
+        accessToken: accessToken
+    });
+});
+
+// Проверка access token
+function verifyToken(req, res, next) {
+    const header = req.headers.authorization;
+
+    if (!header) {
+        return res.status(401).json({
+            message: 'Нет токена'
+        });
+    }
+
+    const token = header.split(' ')[1];
+
+    jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({
+                message: 'Токен недействителен или истек'
+            });
+        }
+
+        req.user = decoded;
+        next();
+    });
+}
+
+// Защищенный профиль
+app.get('/profile', verifyToken, (req, res) => {
+    res.json({
+        message: 'Доступ разрешен',
+        name: user.name,
+        login: req.user.login
+    });
+});
+
+// Обновление токена
+app.post('/refresh', (req, res) => {
+    const oldToken = req.cookies.refreshToken;
+
+    if (!oldToken || !refreshTokens.includes(oldToken)) {
+        return res.status(401).json({
+            message: 'Refresh token отсутствует'
+        });
+    }
+
+    jwt.verify(oldToken, REFRESH_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({
+                message: 'Refresh token истек'
+            });
+        }
+
+        // Ротация refresh token
+        refreshTokens = refreshTokens.filter(t => t !== oldToken);
+
+        const newAccessToken = createAccessToken();
+        const newRefreshToken = createRefreshToken();
+
+        refreshTokens.push(newRefreshToken);
+
+        res.cookie('refreshToken', newRefreshToken, {
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: false,
+            path: '/'
+        });
+
+        res.json({
+            message: 'Токен обновлен',
+            accessToken: newAccessToken
+        });
+    });
+});
+
+// Выход
+app.post('/logout', (req, res) => {
+    const token = req.cookies.refreshToken;
+
+    refreshTokens = refreshTokens.filter(t => t !== token);
+
+    res.clearCookie('refreshToken', {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: false,
+        path: '/'
+    });
+
+    res.json({
+        message: 'Выход выполнен'
+    });
+});
+
+app.listen(3002, () => {
+    console.log('Сервер: http://localhost:3002');
+});

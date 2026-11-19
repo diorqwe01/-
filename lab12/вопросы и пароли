@@ -1,0 +1,18 @@
+базовый:
+Логин: student
+Пароль: 12345
+средний:
+Тестовые данные:
+Роль	Логин	Пароль
+Студент	student	12345
+Преподаватель	teacher	teach123
+
+Проверка: если студент откроет страницу преподавателя, сервер должен вернуть ошибку 403.
+команды: node server.js
+Базовый: http://localhost:3000
+Средний: http://localhost:3001
+Высокий: http://localhost:3002
+Уровень	Команды
+Базовый	npm install express express-session
+Средний	npm install express express-session
+Высокий	npm install express jsonwebtoken cookie-parser

@@ -1,0 +1,41 @@
+const result = document.getElementById('result');
+
+document.getElementById('loginForm').addEventListener('submit',
+async function(e) {
+    e.preventDefault();
+
+    const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            login: document.getElementById('login').value,
+            password: document.getElementById('password').value
+        })
+    });
+
+    const data = await response.json();
+    result.textContent = data.message + ' ' + (data.role || '');
+});
+
+document.getElementById('student').onclick = async function() {
+    const response = await fetch('/student');
+    const data = await response.json();
+    result.textContent = data.message;
+};
+
+document.getElementById('teacher').onclick = async function() {
+    const response = await fetch('/teacher');
+    const data = await response.json();
+    result.textContent = data.message;
+};
+
+document.getElementById('logout').onclick = async function() {
+    const response = await fetch('/logout', {
+        method: 'POST'
+    });
+
+    const data = await response.json();
+    result.textContent = data.message;
+};

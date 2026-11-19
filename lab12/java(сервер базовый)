@@ -1,0 +1,73 @@
+const express = require('express');
+const session = require('express-session');
+
+const app = express();
+
+app.use(express.json());
+app.use(express.static('public'));
+
+app.use(session({
+    secret: 'my-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax'
+    }
+}));
+
+const user = {
+    login: 'student',
+    password: '12345',
+    name: 'Дарвин Диёр'
+};
+
+// Вход
+app.post('/login', (req, res) => {
+    const { login, password } = req.body;
+
+    if (!login || !password) {
+        return res.status(400).json({
+            message: 'Заполните все поля'
+        });
+    }
+
+    if (login === user.login && password === user.password) {
+        req.session.user = user.name;
+
+        return res.json({
+            message: 'Вход выполнен успешно',
+            name: user.name
+        });
+    }
+
+    res.status(401).json({
+        message: 'Неверный логин или пароль'
+    });
+});
+
+// Проверка профиля
+app.get('/profile', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({
+            message: 'Сначала войдите'
+        });
+    }
+
+    res.json({
+        name: req.session.user
+    });
+});
+
+// Выход
+app.post('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.json({
+            message: 'Вы вышли из системы'
+        });
+    });
+});
+
+app.listen(3000, () => {
+    console.log('Сервер запущен: http://localhost:3000');
+});

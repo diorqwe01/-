@@ -1,0 +1,67 @@
+let accessToken = '';
+
+const result = document.getElementById('result');
+
+// Вход
+document.getElementById('loginForm').onsubmit = async function(e) {
+    e.preventDefault();
+
+    const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            login: document.getElementById('login').value,
+            password: document.getElementById('password').value
+        })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        accessToken = data.accessToken;
+    }
+
+    result.textContent = data.message;
+};
+
+// Получение профиля
+document.getElementById('profile').onclick = async function() {
+    const response = await fetch('/profile', {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    });
+
+    const data = await response.json();
+    result.textContent = data.message + ' ' + (data.name || '');
+};
+
+// Обновление токена
+document.getElementById('refresh').onclick = async function() {
+    const response = await fetch('/refresh', {
+        method: 'POST'
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        accessToken = data.accessToken;
+    }
+
+    result.textContent = data.message;
+};
+
+// Выход
+document.getElementById('logout').onclick = async function() {
+    const response = await fetch('/logout', {
+        method: 'POST'
+    });
+
+    const data = await response.json();
+
+    accessToken = '';
+
+    result.textContent = data.message;
+};
